@@ -1,10 +1,17 @@
 import React from 'react';
+import { BrowserRouter, Route } from 'react-router-dom';
+import { _Layout } from './pages/Layout';
+import { Provider } from 'react-redux';
+import store from './redux/store';
 
-const App = () => {
+const App: React.FC = () => {
   return (
-    <div className="App">
-      Hello world
-    </div>
+    <Provider store={ store }>
+      <BrowserRouter>
+        <Route path="/" component={_Layout}></Route>
+      </BrowserRouter>
+    </Provider>
+
   );
 }
 

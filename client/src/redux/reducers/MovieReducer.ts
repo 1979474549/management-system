@@ -1,5 +1,5 @@
 import { IMovie, ICondition } from "../../services/commonType";
-import { MovieAction, SetMovieAction, SetLoadingAction, SetConditionAction, DeleteAction } from "../actions/MovieActions";
+import {  SetMovieAction, SetLoadingAction, SetConditionAction, DeleteAction, SwitchChange } from "../actions/MovieActions";
 import { Reducer } from "react";
 
 
@@ -56,6 +56,25 @@ const deleteState: Reducer<IMovieState, DeleteAction> =  function (state, action
         totalPage: Math.ceil(state.total - 1 / state.condition.limit)
     }
 }
+const switchChange = function (state: IMovieState, action: SwitchChange) {
+    const movie = state.data.find(item => item._id === action.payLoad.id);
+    if(!movie) {
+        return state;
+    }
+    const newMovie = {...movie};
+    newMovie[action.payLoad.type] = action.payLoad.nextState;
+    const newData = state.data.map(d => {
+        if(d._id === action.payLoad.id) {
+            return newMovie;
+        } 
+        return d;
+    })
+    return {
+        ...state,
+        data: newData
+    }
+}
+
 export default (state: IMovieState = defaultState, action: any) => {
     switch(action.type) {
         case 'set_movieAction':
@@ -66,6 +85,8 @@ export default (state: IMovieState = defaultState, action: any) => {
             return setCondition(state, action);
         case 'deleteAction':
             return deleteState(state, action);
+        case 'switch_change':
+            return switchChange(state, action)
         default:
             return state;
     }

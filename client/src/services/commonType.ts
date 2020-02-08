@@ -16,3 +16,8 @@ export interface ICondition {
     limit?: number,
     key?: string
 }
+export enum switchType {
+    isHot = 'isHot',
+    isClassic = 'isClassic',
+    isComming = 'isComming'
+}

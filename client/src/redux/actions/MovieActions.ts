@@ -1,5 +1,5 @@
 import { IAction } from "./ActionTypes";
-import { IMovie, ICondition } from "../../services/commonType";
+import { IMovie, ICondition, switchType } from "../../services/commonType";
 import { ThunkAction } from 'redux-thunk';
 import { IMovieState } from "../reducers/MovieReducer";
 import { MovieService } from "../../services/MovieService";
@@ -42,15 +42,28 @@ function deleteAction(id: string): DeleteAction {
     }
 }
 
-
-function fetchMovies(condition: ICondition): ThunkAction<Promise<void>, IMovieState, any, MovieAction> {
+export type SwitchChange = IAction<'switch_change', {id: string, type: switchType, nextState: boolean}>;
+function switchChangeAction(id: string, type: switchType, nextState: boolean): SwitchChange {
+    return {
+        type: 'switch_change',
+        payLoad: {
+            id,
+            type,
+            nextState
+        }
+    }
+}
+export interface INewMoiveState {
+    movie: IMovieState
+}
+function fetchMovies(condition: ICondition): ThunkAction<Promise<void>, INewMoiveState, any, MovieAction> {
     return async (dispatch, getState) => {
         //1.设置加载状态
         dispatch(setLoadingAction(true));
         //2.设置条件
         dispatch(setConditionAction(condition));
         //3.查询电影
-        const result = await MovieService.find(getState().condition);
+        const result = await MovieService.find(getState().movie.condition);
         //4.设置电影
         dispatch(setMovieAction(result.data, result.total));
         //关闭加载状态
@@ -67,16 +80,29 @@ function deleteMovie(id: string): ThunkAction<Promise<void>, IMovieState, any, M
     }
 }
 
+function switchChange(id: string, type: switchType, nextState: boolean): ThunkAction<Promise<void>, IMovieState, any, MovieAction> {
+    return async (dispatch) => {
+        dispatch(setLoadingAction(true));
+        dispatch(switchChangeAction(id, type, nextState));
+        await MovieService.edit(id, {
+            [type]: nextState
+        })
+        dispatch(setLoadingAction(false));
+    }
+}
 
 
-export type MovieAction = SetMovieAction | SetLoadingAction | SetConditionAction | DeleteAction;
+
+export type MovieAction = SetMovieAction | SetLoadingAction | SetConditionAction | DeleteAction | SwitchChange;
 export default {
     setMovieAction,
     setLoadingAction,
     setConditionAction,
     deleteAction,
     fetchMovies,
-    deleteMovie
+    deleteMovie,
+    switchChangeAction,
+    switchChange
 }
 
 
