@@ -14,13 +14,15 @@ export class HandleResponse {
         }
         res.send({
             err,
-            code: 0
+            code: 0,
+            data: null
         })
     }
     public static sendData(data: any, res:Response) {
         res.send({
             data,
-            code: 1
+            code: 1,
+            err: ''
         })
     }
     public static sendPage<T>(result: ISearchReault<T>, res: Response) {
