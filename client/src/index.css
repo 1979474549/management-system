@@ -24,3 +24,6 @@ code {
   font-size: 0.9em !important;
   margin-left: 5px;
 }
+.layout-content {
+  padding: .5em;
+}
