@@ -51,7 +51,7 @@ export class MovieService {
         //查询
         const data = await MovieModel.find({
             name: {$regex: new RegExp(newCondition.key)}
-        }).skip((newCondition.page - 1) * newCondition.limit).limit(newCondition.limit);
+        }).skip((newCondition.page - 1) * newCondition.limit).sort([['_id',-1]]).limit(newCondition.limit);
         const count = await MovieModel.find({
             name: {$regex: new RegExp(newCondition.key)}
         }).countDocuments();
