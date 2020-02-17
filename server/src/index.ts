@@ -4,9 +4,12 @@ import Router from './routers';
 import UplaodRouter from './routers/UploadRouter';
 import express from 'express';
 import path from 'path';
+import history from 'connect-history-api-fallback';
 
 const app = express();
 app.use(express.json());
+app.use(history());
+app.use('/', express.static('public/build'))
 app.use('/upload', express.static('public/upload'));
 
 app.use('/upload', UplaodRouter);
